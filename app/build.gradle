@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdkVersion Versions.compilerSdkVersion
+    buildToolsVersion Versions.buildToolsVersion
+
+    defaultConfig {
+        applicationId "me.robbin.wallet"
+        minSdkVersion Versions.minSdkVersion
+        targetSdkVersion Versions.targetSdkVersion
+        versionCode Versions.versionCode
+        versionName Versions.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        useIR = true
+    }
+    buildFeatures {
+        compose true
+        dataBinding true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.composeVersion
+        kotlinCompilerVersion Versions.kotlinVersion
+    }
+}
+
+dependencies {
+
+    implementation Dependencies.androidCoreKtx
+    implementation Dependencies.androidAppcompat
+    implementation Dependencies.material
+    implementation Dependencies.composeUI
+    implementation Dependencies.composeMaterial
+    implementation Dependencies.composeUITooling
+    implementation Dependencies.lifecycleRuntimeKtx
+    implementation Dependencies.activityCompose
+    testImplementation Dependencies.jUnit
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
