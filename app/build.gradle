@@ -44,6 +44,8 @@ android {
 
 dependencies {
 
+    implementation project(':architecture')
+
     implementation Dependencies.androidCoreKtx
     implementation Dependencies.androidAppcompat
     implementation Dependencies.material

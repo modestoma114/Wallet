@@ -2,8 +2,6 @@ package me.robbin.swipeback
 
 import android.view.View
 import androidx.annotation.FloatRange
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 
 
 /**
@@ -18,19 +16,20 @@ import androidx.annotation.Nullable
 interface SwipeBackTransformer {
 
     fun initialize(
-        @NonNull currentView: View,
-        @Nullable previousView: View?
+        currentView: View,
+        previousView: View?
     )
 
     fun transform(
-        @NonNull currentView: View,
-        @Nullable previousView: View?,
-        @FloatRange(from = 0.0, to = 1.0) fraction: Float
+        currentView: View,
+        previousView: View?,
+        @FloatRange(from = 0.0, to = 1.0) fraction: Float,
+        direction: SwipeBackDirection
     )
 
     fun restore(
-        @NonNull currentView: View,
-        @Nullable previousView: View?
+        currentView: View,
+        previousView: View?
     )
 
 }

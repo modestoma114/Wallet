@@ -1,9 +1,9 @@
 package me.robbin.swipeback.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.res.TypedArray
-import android.os.Build
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import java.lang.reflect.InvocationHandler
@@ -26,7 +26,7 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
     private val mFromConverter: FromConverter = FromConverter()
     private var mIsTranslucent: Boolean = isThemeTranslucent()
 
-    public fun isThemeTranslucent(): Boolean {
+    fun isThemeTranslucent(): Boolean {
         return try {
             val typedArray: TypedArray = mActivity.theme.obtainStyledAttributes(IntArray(1) {android.R.attr.windowIsTranslucent})
             val windowIsTranslucent = typedArray.getBoolean(0, false)
@@ -37,9 +37,9 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
         }
     }
 
-    public fun isTranslucent(): Boolean = mIsTranslucent
+    fun isTranslucent(): Boolean = mIsTranslucent
 
-    public fun toTranslucent() {
+    fun toTranslucent() {
         if (mIsTranslucent) return
         mToConverter.convert(object : TranslucentCallback {
             override fun onTranslucentCallback(translucent: Boolean) {
@@ -48,7 +48,7 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
         })
     }
 
-    public fun fromTranslucent() {
+    fun fromTranslucent() {
         if (!mIsTranslucent) return
         mFromConverter.convert()
         this.mIsTranslucent = false
@@ -109,7 +109,7 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
                 }
             }
             if (mTranslucentConversionListenerClass != null) {
-                val invocationHandler = InvocationHandler { proxy, method, args ->
+                val invocationHandler = InvocationHandler { _, _, args ->
                     var translucent = false
                     if (args != null && args.size == 1)
                         translucent = args[0] as Boolean
@@ -125,6 +125,7 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
             return null
         }
 
+        @SuppressLint("DiscouragedPrivateApi")
         @Throws(Throwable::class)
         private fun convertActivityToTranslucent(@Nullable translucentConversionListener: Any?) {
             if (mMethodConvertToTranslucent == null) {
@@ -136,11 +137,13 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
                 method?.isAccessible = true
                 mMethodConvertToTranslucent = method
             }
+            val options = mMethodGetActivityOptions?.invoke(mActivity)
+            mMethodConvertToTranslucent?.invoke(mActivity, translucentConversionListener, options)
         }
 
     }
 
-    public interface TranslucentCallback {
+    interface TranslucentCallback {
         fun onTranslucentCallback(translucent: Boolean)
     }
 

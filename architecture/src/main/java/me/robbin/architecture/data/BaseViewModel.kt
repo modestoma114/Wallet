@@ -1,7 +1,7 @@
 package me.robbin.architecture.data
 
 import androidx.lifecycle.AndroidViewModel
-import me.robbin.architecture.utils.Utils
+import me.robbin.utils.Utils
 
 
 /**

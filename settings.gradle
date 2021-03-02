@@ -10,3 +10,4 @@ rootProject.name = "Wallet"
 include ':app'
 include ':architecture'
 include ':swipeback'
+include ':utils'

@@ -3,7 +3,7 @@ package me.robbin.architecture.func
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import me.robbin.architecture.utils.Utils
+import me.robbin.utils.Utils
 
 
 /**

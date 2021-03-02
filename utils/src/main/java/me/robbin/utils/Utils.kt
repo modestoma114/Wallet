@@ -1,4 +1,4 @@
-package me.robbin.architecture.utils
+package me.robbin.utils
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException
 
 
 /**
- * @PackageName: me.robbin.architecture.utils
+ * @PackageName: me.robbin.utils
  * @Name:        Utils
  * @Description: Utils
  * @UpdateDate:  2021/2/28 22:50
