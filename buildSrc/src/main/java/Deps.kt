@@ -1,5 +1,3 @@
-import groovyjarjarantlr.Version
-
 object Versions {
 
     const val compilerSdkVersion = 30

@@ -10,25 +10,25 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import me.robbin.architecture.ui.BaseSwipeBackActivity
-import me.robbin.swipeback.SwipeBackNode
 import me.robbin.wallet.ui.theme.WalletTheme
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val mNodes: MutableList<SwipeBackNode> = mutableListOf()
         setContent {
             WalletTheme {
                 Surface(color = MaterialTheme.colors.background) {
                     Greeting("Android") {
-//                        startActivity(Intent(this, MainActivity::class.java))
-                        Toast.makeText(this, "mNodes.size.toString()", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
                     }
                 }
             }
         }
     }
+
 }
 
 @Composable

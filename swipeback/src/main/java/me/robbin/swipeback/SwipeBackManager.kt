@@ -3,7 +3,6 @@ package me.robbin.swipeback
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import me.robbin.utils.Utils
 
 
@@ -27,8 +26,7 @@ object SwipeBackManager {
     }
 
     fun isRootNode(node: SwipeBackNode): Boolean {
-        if (mNodes.isEmpty()) return false
-        return mNodes[0] === node
+        return mNodes.indexOf(node) == 0
     }
 
     fun isRootNode(activity: Activity): Boolean {
@@ -63,7 +61,8 @@ object SwipeBackManager {
     }
 
     private fun removeNode(activity: Activity) {
-        for (i in mNodes.size downTo 0) {
+        val size = mNodes.size - 1
+        for (i in size.downTo(0)) {
             val node = mNodes[i]
             if (node.getActivity() === activity) {
                 mNodes.removeAt(i)
@@ -74,7 +73,6 @@ object SwipeBackManager {
 
     private class SwipeBackManagerActivityLifecycle : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            Log.i(TAG, "mNodes insert activity: $activity")
             addNode(activity)
         }
 

@@ -19,8 +19,7 @@ object SwipeBackAbility {
 
     fun getSwipeBackDirectionForActivity(activity: Activity): SwipeBackDirection {
         return if (activity is Direction) {
-            val ability: Direction = activity
-            ability.swipeBackDirection()
+            activity.swipeBackDirection()
         } else {
             SwipeBack.getSwipeBackDirection()
         }
@@ -32,8 +31,7 @@ object SwipeBackAbility {
 
     fun getSwipeBackTransformerForActivity(activity: Activity): SwipeBackTransformer? {
         return if (activity is Transformer) {
-            val ability: Transformer = activity
-            ability.swipeBackTransformer()
+            activity.swipeBackTransformer()
         } else {
             SwipeBack.getSwipeBackTransformer()
         }
@@ -45,8 +43,7 @@ object SwipeBackAbility {
 
     fun isSwipeBackOnlyEdgeForActivity(activity: Activity): Boolean {
         return if (activity is OnlyEdge) {
-            val ability: OnlyEdge = activity
-            ability.swipeBackOnlyEdge()
+            activity.swipeBackOnlyEdge()
         } else {
             SwipeBack.isSwipeBackOnlyEdge()
         }
@@ -58,8 +55,7 @@ object SwipeBackAbility {
 
     fun isSwipeBackForceEdgeForActivity(activity: Activity): Boolean {
         return if (activity is ForceEdge) {
-            val ability: ForceEdge = activity
-            ability.swipeBackForceEdge()
+            activity.swipeBackForceEdge()
         } else {
             SwipeBack.isSwipeBackForceEdge()
         }
@@ -72,8 +68,7 @@ object SwipeBackAbility {
     @ColorInt
     fun getSwipeBackShadowColorForActivity(activity: Activity): Int {
         return if (activity is ShadowColor) {
-            val ability: ShadowColor = activity
-            ability.swipeBackShadowColor()
+            activity.swipeBackShadowColor()
         } else {
             SwipeBack.getSwipeBackShadowColor()
         }
@@ -87,8 +82,7 @@ object SwipeBackAbility {
     @Px
     fun getSwipeBackShadowSizeForActivity(activity: Activity): Int {
         return if (activity is ShadowMask) {
-            val ability: ShadowMask = activity
-            ability.swipeBackShadowSize()
+            activity.swipeBackShadowSize()
         } else {
             SwipeBack.getSwipeBackShadowSize()
         }
@@ -102,8 +96,7 @@ object SwipeBackAbility {
     @IntRange(from = 0, to = 255)
     fun getSwipeBackMaskAlphaForActivity(activity: Activity): Int {
         return if (activity is MaskAlpha) {
-            val ability: MaskAlpha = activity
-            ability.swipeBackMaskAlpha()
+            activity.swipeBackMaskAlpha()
         } else {
             SwipeBack.getSwipeBackMaskAlpha()
         }

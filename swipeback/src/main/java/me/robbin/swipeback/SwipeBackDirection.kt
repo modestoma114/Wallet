@@ -16,7 +16,6 @@ enum class SwipeBackDirection {
     RIGHT,
     BOTTOM,
     LEFT,
-    TOP,
-    ;
+    TOP
 
 }

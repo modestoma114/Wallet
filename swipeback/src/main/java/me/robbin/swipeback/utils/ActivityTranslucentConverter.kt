@@ -28,7 +28,8 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
 
     fun isThemeTranslucent(): Boolean {
         return try {
-            val typedArray: TypedArray = mActivity.theme.obtainStyledAttributes(IntArray(1) {android.R.attr.windowIsTranslucent})
+            val typedArray: TypedArray =
+                mActivity.theme.obtainStyledAttributes(IntArray(1) { android.R.attr.windowIsTranslucent })
             val windowIsTranslucent = typedArray.getBoolean(0, false)
             typedArray.recycle()
             windowIsTranslucent
@@ -41,11 +42,9 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
 
     fun toTranslucent() {
         if (mIsTranslucent) return
-        mToConverter.convert(object : TranslucentCallback {
-            override fun onTranslucentCallback(translucent: Boolean) {
-                mIsTranslucent = translucent
-            }
-        })
+        mToConverter.convert { translucent ->
+            mIsTranslucent = translucent
+        }
     }
 
     fun fromTranslucent() {
@@ -54,6 +53,10 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
         this.mIsTranslucent = false
     }
 
+    /**
+     * @Description: 将 Activity 转变为不透明
+     * Created by Robbin Ma in 2021/3/3 下午5:16
+     */
     private inner class FromConverter {
 
         private var mInitialedConvertFromTranslucent = false
@@ -62,9 +65,9 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
         fun convert() {
             try {
                 if (mMethodConvertFromTranslucent == null) {
-                    if (mInitialedConvertFromTranslucent)
-                        return
+                    if (mInitialedConvertFromTranslucent) return
                     mInitialedConvertFromTranslucent = true
+                    // 将 Activity 从透明转变为不透明
                     val method = Activity::class.java.getDeclaredMethod("convertFromTranslucent")
                     method.isAccessible = true
                     mMethodConvertFromTranslucent = method
@@ -76,31 +79,40 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
 
     }
 
+    /**
+     * @Description: 将 Activity 转变为透明
+     * Created by Robbin Ma in 2021/3/3 下午5:16
+     */
     private inner class ToConverter {
 
         private var mInitialedConvertToTranslucent = false
         private var mTranslucentConversionListenerClass: Class<*>? = null
         private var mMethodConvertToTranslucent: Method? = null
-        private var mMethodGetActivityOptions: Method? = null
 
-        fun convert(callback: TranslucentCallback?) {
+        fun convert(block: (translucent: Boolean) -> Unit) {
             if (mInitialedConvertToTranslucent && mMethodConvertToTranslucent == null) {
-                callback?.onTranslucentCallback(false)
+                block(false)
                 return
             }
             try {
-                val translucentConversionListener = getTranslucentConversionListener(callback)
+                val translucentConversionListener = getTranslucentConversionListener(block)
                 convertActivityToTranslucent(translucentConversionListener)
                 if (translucentConversionListener == null) {
-                    callback?.onTranslucentCallback(false)
+                    block(false)
                 }
             } catch (e: Throwable) {
-                callback?.onTranslucentCallback(false)
+                block(false)
             }
         }
 
+        /**
+         * @Description: 获取 TranslucentConversionListener
+         * @Params:      block: (translucent: Boolean) -> Unit
+         * @Return:      Any?
+         * Created by Robbin Ma in 2021/3/3 下午5:41
+         */
         @Throws(Throwable::class)
-        private fun getTranslucentConversionListener(@Nullable callback: TranslucentCallback?): Any? {
+        private fun getTranslucentConversionListener(block: (translucent: Boolean) -> Unit): Any? {
             if (mTranslucentConversionListenerClass == null) {
                 val clazzArray: Array<Class<*>> = Activity::class.java.declaredClasses
                 clazzArray.forEach {
@@ -113,7 +125,7 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
                     var translucent = false
                     if (args != null && args.size == 1)
                         translucent = args[0] as Boolean
-                    callback?.onTranslucentCallback(translucent)
+                    block(translucent)
                     return@InvocationHandler null
                 }
                 return Proxy.newProxyInstance(
@@ -125,15 +137,26 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
             return null
         }
 
+        /**
+         * @Description: 将 Activity 转变为透明
+         * @Params:
+         * @Return:
+         * Created by Robbin Ma in 2021/3/3 下午5:29
+         */
         @SuppressLint("DiscouragedPrivateApi")
         @Throws(Throwable::class)
         private fun convertActivityToTranslucent(@Nullable translucentConversionListener: Any?) {
+            var mMethodGetActivityOptions: Method? = null
             if (mMethodConvertToTranslucent == null) {
                 mInitialedConvertToTranslucent = true
                 val getActivityOptions: Method? = Activity::class.java.getDeclaredMethod("getActivityOptions")
                 getActivityOptions?.isAccessible = true
                 mMethodGetActivityOptions = getActivityOptions
-                val method: Method? = Activity::class.java.getDeclaredMethod("convertToTranslucent", mTranslucentConversionListenerClass, ActivityOptions::class.java)
+                val method: Method? = Activity::class.java.getDeclaredMethod(
+                    "convertToTranslucent",
+                    mTranslucentConversionListenerClass,
+                    ActivityOptions::class.java
+                )
                 method?.isAccessible = true
                 mMethodConvertToTranslucent = method
             }
@@ -141,10 +164,6 @@ class ActivityTranslucentConverter(@NonNull private val mActivity: Activity) {
             mMethodConvertToTranslucent?.invoke(mActivity, translucentConversionListener, options)
         }
 
-    }
-
-    interface TranslucentCallback {
-        fun onTranslucentCallback(translucent: Boolean)
     }
 
 }

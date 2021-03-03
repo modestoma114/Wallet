@@ -1,7 +1,9 @@
 package me.robbin.wallet
 
 import android.app.Application
+import android.graphics.Color
 import me.robbin.swipeback.SwipeBack
+import me.robbin.swipeback.SwipeBackDirection
 
 
 /**
@@ -18,7 +20,10 @@ class MyApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         SwipeBack.init()
+        SwipeBack.setSwipeBackDirection(SwipeBackDirection.RIGHT)
         SwipeBack.setSwipeBackForceEdge(true)
+        SwipeBack.setSwipeBackShadowSize(100)
+        SwipeBack.setSwipeBackShadowColor(Color.BLACK)
     }
 
 }

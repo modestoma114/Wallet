@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -27,9 +28,9 @@ import kotlin.math.abs
  * Create by Robbin Ma in 2021/3/1 下午5:25
  */
 
-open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
+class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
 
-    private val mDragHelper: ViewDragHelper = ViewDragHelper.create(this, 1F, DragHelperCallback())
+    private val mDragHelper: ViewDragHelper
     private val mShadowRect: Rect = Rect()
 
     private var mSwiping: Boolean = false
@@ -46,8 +47,6 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
 
     @IntRange(from = 0, to = 255)
     private var mMaskAlpha: Int = 150
-
-    @NonNull
     private var mSwipeBackDirection: SwipeBackDirection = SwipeBackDirection.NONE
     private var mSwipeBackForceEdge: Boolean = true
     private var mSwipeBackOnlyEdge: Boolean = false
@@ -55,6 +54,12 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
     private var mSwipeBackVelocity: Float = 2000F
 
     private lateinit var mSwipeBackListener: SwipeBackListener
+
+    init {
+        mDragHelper = ViewDragHelper.create(this, 1F, DragHelperCallback())
+        mDragHelper.minVelocity = mSwipeBackVelocity
+        setEdgeTrackingEnabledByDirection()
+    }
 
     fun isSwipeBackEnable(): Boolean = mSwipeBackDirection != SwipeBackDirection.NONE
 
@@ -98,9 +103,11 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
 
     fun getMaskAlpha() = mMaskAlpha
 
-    fun setSwipeBackDirection(@NonNull direction: SwipeBackDirection) {
+    fun setSwipeBackDirection(direction: SwipeBackDirection) {
         if (direction == mSwipeBackDirection) return
         mSwipeBackDirection = direction
+        setEdgeTrackingEnabledByDirection()
+        mShadowDrawable = null
     }
 
     private fun setEdgeTrackingEnabledByDirection() {
@@ -113,14 +120,13 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
         }
     }
 
-    @NonNull
     fun getSwipeBackDirection(): SwipeBackDirection = mSwipeBackDirection
 
     fun getSwipeBackVelocity(): Float = mSwipeBackVelocity
 
     fun setSwipeBackVelocity(@FloatRange(from = 0.0) swipeBackVelocity: Float) {
         this.mSwipeBackVelocity = swipeBackVelocity
-        mDragHelper?.minVelocity = mSwipeBackVelocity
+        mDragHelper.minVelocity = mSwipeBackVelocity
     }
 
     fun isSwipeBackOnlyEdge(): Boolean = mSwipeBackOnlyEdge
@@ -204,6 +210,8 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
                 }
             }
             MotionEvent.ACTION_UP -> {
+                mCheckedIntercept = false
+                mShouldIntercept = false
             }
             MotionEvent.ACTION_CANCEL -> {
                 mCheckedIntercept = false
@@ -212,7 +220,7 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
             else -> {
             }
         }
-        return dispatchTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
@@ -329,11 +337,9 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
 
     private fun refreshFraction(view: View) {
         when (mSwipeBackDirection) {
-            SwipeBackDirection.RIGHT -> {
-            }
+            SwipeBackDirection.RIGHT -> mFraction = 1F * abs(view.left) / (width + mShadowSize)
             SwipeBackDirection.LEFT -> mFraction = 1F * abs(view.left) / (width + mShadowSize)
-            SwipeBackDirection.BOTTOM -> {
-            }
+            SwipeBackDirection.BOTTOM -> mFraction = 1F * abs(view.top) / (height + mShadowSize)
             SwipeBackDirection.TOP -> mFraction = 1F * abs(view.top) / (height + mShadowSize)
             SwipeBackDirection.NONE -> {
             }
@@ -344,6 +350,7 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
 
     @NonNull
     private fun getNonNullShadowDrawable(): GradientDrawable {
+        Log.i("SwipeBackLayout", "getNonNullShadowDrawable")
         if (mShadowDrawable == null) {
             val colors = IntArray(3) {
                 mShadowColor
@@ -368,9 +375,12 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
                     mShadowDrawable!!.setSize(mShadowSize, 0)
                 }
                 else -> {
+                    mShadowDrawable = GradientDrawable()
+                    mShadowDrawable!!.setSize(0, 0)
                 }
             }
         }
+        Log.i("SwipeBackLayout", mShadowDrawable.toString())
         return mShadowDrawable!!
     }
 
@@ -433,11 +443,9 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
                 }
             } else {
                 when (mSwipeBackDirection) {
-                    SwipeBackDirection.RIGHT -> {
-                    }
+                    SwipeBackDirection.RIGHT -> smoothScrollToX(0)
                     SwipeBackDirection.LEFT -> smoothScrollToX(0)
-                    SwipeBackDirection.TOP -> {
-                    }
+                    SwipeBackDirection.TOP -> smoothScrollToY(0)
                     SwipeBackDirection.BOTTOM -> smoothScrollToY(0)
                     SwipeBackDirection.NONE -> {
                     }
@@ -457,24 +465,24 @@ open class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
 
     }
 
-    protected fun beforeSwipe() {
+    fun beforeSwipe() {
         if (::mSwipeBackListener.isInitialized)
             mSwipeBackListener.onBeforeSwipe(mFraction, mSwipeBackDirection)
     }
 
-    protected fun onSwipeStart() {
+    fun onSwipeStart() {
         mSwiping = true
         if (::mSwipeBackListener.isInitialized)
             mSwipeBackListener.onStartSwipe(mFraction, mSwipeBackDirection)
     }
 
-    protected fun onSwiping() {
+    fun onSwiping() {
         invalidate()
         if (::mSwipeBackListener.isInitialized)
             mSwipeBackListener.onSwiping(mFraction, mSwipeBackDirection)
     }
 
-    protected fun onSwipeEnd() {
+    fun onSwipeEnd() {
         mSwiping = false
         if (::mSwipeBackListener.isInitialized)
             mSwipeBackListener.onEndSwipe(mFraction, mSwipeBackDirection)

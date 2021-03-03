@@ -19,13 +19,11 @@ import me.robbin.utils.Utils
 
 object SwipeBack {
 
-    @NonNull
     private var mSwipeBackDirection: SwipeBackDirection = SwipeBackDirection.NONE
-    @Nullable
     private var mSwipeBackTransformer: SwipeBackTransformer? = null
 
     private var mSwipeBackOnlyEdge: Boolean = false
-    private var mSwipeBackForceEdge: Boolean = false
+    private var mSwipeBackForceEdge: Boolean = true
     @ColorInt
     private var mShadowColor: Int = ColorUtils.setAlphaComponent(Color.BLACK, 50)
     @Px
@@ -33,7 +31,7 @@ object SwipeBack {
     @IntRange(from = 0, to = 255)
     private var mMaskAlpha = 150
 
-    private var mRootSwipeBackEnable = true
+    private var mRootSwipeBackEnable = false
 
     fun init() {
         SwipeBackManager.init()
