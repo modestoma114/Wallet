@@ -263,6 +263,7 @@ class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
     }
 
     override fun drawChild(canvas: Canvas?, child: View?, drawingTime: Long): Boolean {
+        Log.i("SwipeBackLayout", "start draw child")
         val ret = super.drawChild(canvas, child, drawingTime)
         if (isSwipeBackEnable() && isShadowEnable()) {
             if (child == getChildAt(0))
@@ -272,6 +273,7 @@ class SwipeBackLayout(mContext: Context) : FrameLayout(mContext) {
     }
 
     private fun drawShadow(canvas: Canvas?, child: View?) {
+        Log.i("SwipeBackLayout", "start draw shadow: $child")
         val childRect = mShadowRect
         child?.getHitRect(childRect)
         val shadow = getNonNullShadowDrawable()

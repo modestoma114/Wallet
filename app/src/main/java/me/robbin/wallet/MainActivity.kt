@@ -2,7 +2,6 @@ package me.robbin.wallet
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Button
@@ -10,14 +9,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import me.robbin.utils.BarUtils
 import me.robbin.wallet.ui.theme.WalletTheme
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        BarUtils.transparentStatusBar(this)
         setContent {
             WalletTheme {
                 Surface(color = MaterialTheme.colors.background) {
